@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+sqlalchemy>=2.0
+asyncpg
+alembic
+firebase-admin
+pydantic>=2.0
+pydantic-settings
+python-dotenv
+cryptography

@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@import '@fontsource/space-grotesk/index.css';
+@import '@fontsource/jetbrains-mono/index.css';
+
+:root {
+  --color-paper:  #F7F7F5;
+  --color-forest: #1A3C2B;
+  --color-grid:   #3A3A38;
+  --color-coral:  #FF8C69;
+  --color-mint:   #9EFFBF;
+  --color-gold:   #F4D35E;
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body:    'General Sans', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+}
+
+@theme {
+  --color-paper: #F7F7F5;
+  --color-forest: #1A3C2B;
+  --color-gridColor: #3A3A38;
+  --color-coral: #FF8C69;
+  --color-mint: #9EFFBF;
+  --color-gold: #F4D35E;
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'General Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --radius-none: 0px;
+  --radius-sm: 2px;
+
+  --animate-orbit-spin: orbit-spin 20s linear infinite;
+
+  @keyframes orbit-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-forest);
+  font-family: var(--font-body);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbars to match technical layout */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-paper);
+  border-left: 1px solid rgba(58, 58, 56, 0.1);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-forest);
+  border-radius: 0px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-coral);
+}
