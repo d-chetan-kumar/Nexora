@@ -1,6 +1,7 @@
 FROM python:3.9-slim
 
 WORKDIR /app
+ENV PYTHONPATH=/app
 
 # Install system dependencies if needed (e.g. gcc for asyncpg/psycopg2)
 RUN apt-get update && apt-get install -y --no-install-recommends \
