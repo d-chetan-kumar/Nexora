@@ -2,12 +2,21 @@ import base64
 import json
 import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import Field
+from pydantic import Field, field_validator
 
 class Settings(BaseSettings):
     DATABASE_URL: str = Field(default="postgresql+asyncpg://localhost/nexora")
     FIREBASE_SERVICE_ACCOUNT_JSON: str = Field(default="")
     ALLOWED_ORIGIN: str = Field(default="http://localhost:5173")
+
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def force_asyncpg_driver(cls, v: str) -> str:
+        if v.startswith("postgresql://"):
+            return v.replace("postgresql://", "postgresql+asyncpg://", 1)
+        if v.startswith("postgres://"):
+            return v.replace("postgres://", "postgresql+asyncpg://", 1)
+        return v
 
     model_config = SettingsConfigDict(
         env_file=".env",
