@@ -18,5 +18,5 @@ COPY . .
 # Set default port to 8080 (standard for Cloud Run / Render)
 EXPOSE 8080
 
-# Run uvicorn server
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Run fastapi production server
+CMD ["fastapi", "run", "app/main.py", "--port", "8080"]
