@@ -1,163 +1,20 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
-// Default mock files data to seed localStorage
-const DEFAULT_FILES = [
-  {
-    id: 'f1',
-    name: 'Security_Compliance_2026.pdf',
-    type: 'pdf',
-    parentId: 'folder_docs',
-    size: 2450000,
-    starred: true,
-    trashed: false,
-    createdAt: '2026-07-18T10:15:30Z',
-    updatedAt: '2026-07-18T10:15:30Z',
-    owner: 'chilkabhanuvilasith@gmail.com',
-    sharedWith: ['elizabeth.vance@aegis.com'],
-    auditLog: [
-      { action: 'Created', user: 'chilkabhanuvilasith@gmail.com', date: '2026-07-18T10:15:30Z' },
-      { action: 'Shared with elizabeth.vance@aegis.com', user: 'chilkabhanuvilasith@gmail.com', date: '2026-07-18T11:00:00Z' }
-    ]
-  },
-  {
-    id: 'f2',
-    name: 'Project_Spec_v2.docx',
-    type: 'docx',
-    parentId: 'folder_docs',
-    size: 450000,
-    starred: false,
-    trashed: false,
-    createdAt: '2026-07-19T08:20:00Z',
-    updatedAt: '2026-07-19T09:12:00Z',
-    owner: 'chilkabhanuvilasith@gmail.com',
-    sharedWith: [],
-    auditLog: [
-      { action: 'Created', user: 'chilkabhanuvilasith@gmail.com', date: '2026-07-19T08:20:00Z' },
-      { action: 'Modified content', user: 'chilkabhanuvilasith@gmail.com', date: '2026-07-19T09:12:00Z' }
-    ]
-  },
-  {
-    id: 'f3',
-    name: 'architecture_layout.png',
-    type: 'png',
-    parentId: 'folder_media',
-    size: 15400000,
-    starred: true,
-    trashed: false,
-    createdAt: '2026-07-17T14:30:00Z',
-    updatedAt: '2026-07-17T14:30:00Z',
-    owner: 'chilkabhanuvilasith@gmail.com',
-    sharedWith: ['marcus.thorne@vector.com'],
-    auditLog: [
-      { action: 'Created', user: 'chilkabhanuvilasith@gmail.com', date: '2026-07-17T14:30:00Z' }
-    ]
-  },
-  {
-    id: 'f4',
-    name: 'system_demo.mp4',
-    type: 'mp4',
-    parentId: 'folder_media',
-    size: 48900000,
-    starred: false,
-    trashed: false,
-    createdAt: '2026-07-19T11:00:00Z',
-    updatedAt: '2026-07-19T11:00:00Z',
-    owner: 'chilkabhanuvilasith@gmail.com',
-    sharedWith: [],
-    auditLog: [
-      { action: 'Created', user: 'chilkabhanuvilasith@gmail.com', date: '2026-07-19T11:00:00Z' }
-    ]
-  },
-  {
-    id: 'f5',
-    name: 'q2_budget_ledger.xlsx',
-    type: 'xlsx',
-    parentId: 'folder_finance',
-    size: 890000,
-    starred: false,
-    trashed: false,
-    createdAt: '2026-07-15T09:00:00Z',
-    updatedAt: '2026-07-15T09:00:00Z',
-    owner: 'chilkabhanuvilasith@gmail.com',
-    sharedWith: ['siddharth.mehta@ledger.com'],
-    auditLog: [
-      { action: 'Created', user: 'chilkabhanuvilasith@gmail.com', date: '2026-07-15T09:00:00Z' }
-    ]
-  },
-  {
-    id: 'f6',
-    name: 'README_Nexora.md',
-    type: 'txt',
-    parentId: 'root',
-    size: 1520,
-    starred: true,
-    trashed: false,
-    createdAt: '2026-07-19T13:40:00Z',
-    updatedAt: '2026-07-19T13:40:00Z',
-    owner: 'chilkabhanuvilasith@gmail.com',
-    sharedWith: [],
-    auditLog: [
-      { action: 'Created', user: 'chilkabhanuvilasith@gmail.com', date: '2026-07-19T13:40:00Z' }
-    ]
-  },
-  // Folders
-  {
-    id: 'folder_docs',
-    name: 'Documents',
-    type: 'folder',
-    parentId: 'root',
-    size: null,
-    starred: false,
-    trashed: false,
-    createdAt: '2026-07-18T10:00:00Z',
-    updatedAt: '2026-07-19T09:12:00Z',
-    owner: 'chilkabhanuvilasith@gmail.com',
-    sharedWith: [],
-    auditLog: [
-      { action: 'Created Directory', user: 'chilkabhanuvilasith@gmail.com', date: '2026-07-18T10:00:00Z' }
-    ]
-  },
-  {
-    id: 'folder_media',
-    name: 'Media Assets',
-    type: 'folder',
-    parentId: 'root',
-    size: null,
-    starred: false,
-    trashed: false,
-    createdAt: '2026-07-17T14:00:00Z',
-    updatedAt: '2026-07-19T11:00:00Z',
-    owner: 'chilkabhanuvilasith@gmail.com',
-    sharedWith: [],
-    auditLog: [
-      { action: 'Created Directory', user: 'chilkabhanuvilasith@gmail.com', date: '2026-07-17T14:00:00Z' }
-    ]
-  },
-  {
-    id: 'folder_finance',
-    name: 'Finance & Ledger',
-    type: 'folder',
-    parentId: 'root',
-    size: null,
-    starred: false,
-    trashed: false,
-    createdAt: '2026-07-15T08:30:00Z',
-    updatedAt: '2026-07-15T09:00:00Z',
-    owner: 'chilkabhanuvilasith@gmail.com',
-    sharedWith: [],
-    auditLog: [
-      { action: 'Created Directory', user: 'chilkabhanuvilasith@gmail.com', date: '2026-07-15T08:30:00Z' }
-    ]
-  }
-];
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export default function StorageDashboard({ setView }) {
-  // States
-  const [items, setItems] = useState(() => {
-    const saved = localStorage.getItem('nexora_drive_items');
-    return saved ? JSON.parse(saved) : DEFAULT_FILES;
-  });
+  // Authentication states
+  const [token, setToken] = useState(() => localStorage.getItem('nexora_token'));
+  const [isAuthenticated, setIsAuthenticated] = useState(!!token);
+  const [authMode, setAuthMode] = useState('login'); // 'login' or 'signup'
+  const [authEmail, setAuthEmail] = useState('');
+  const [authPassword, setAuthPassword] = useState('');
+  const [authError, setAuthError] = useState('');
+  const [authLoading, setAuthLoading] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
 
+  // File explorer states
+  const [items, setItems] = useState([]);
   const [currentFolderId, setCurrentFolderId] = useState('root');
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -175,25 +32,112 @@ export default function StorageDashboard({ setView }) {
   const [renameValue, setRenameValue] = useState('');
   const [activeMenuId, setActiveMenuId] = useState(null);
 
-  // Upload Notification State
+  // Active Uploads List
   const [uploads, setUploads] = useState([]);
 
-  // Sync to localStorage
+  // Fetch Nodes & User Profile when authenticated
+  const fetchNodes = async () => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_URL}/nodes?parent_id=${currentFolderId}&tab=${sidebarTab}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (res.status === 401) {
+        handleLogout();
+        return;
+      }
+      if (!res.ok) throw new Error('Failed to fetch storage nodes.');
+      const data = await res.json();
+      setItems(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchUserProfile = async () => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_URL}/users/me`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (res.status === 401) {
+        handleLogout();
+        return;
+      }
+      if (!res.ok) throw new Error('Failed to retrieve user profile.');
+      const data = await res.json();
+      setUserProfile(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
-    localStorage.setItem('nexora_drive_items', JSON.stringify(items));
-  }, [items]);
+    if (isAuthenticated) {
+      fetchNodes();
+    }
+  }, [currentFolderId, sidebarTab, isAuthenticated, token]);
 
-  // Storage Stats (total capacity 15GB = 16,106,127,360 bytes)
-  const totalCapacity = 16106127360;
-  const usedStorage = useMemo(() => {
-    return items.reduce((acc, item) => (item.size && !item.trashed ? acc + item.size : acc), 0);
-  }, [items]);
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchUserProfile();
+    }
+  }, [isAuthenticated, token]);
 
+  // Auth Handlers
+  const handleAuthSubmit = async (e) => {
+    e.preventDefault();
+    setAuthError('');
+    setAuthLoading(true);
+    try {
+      const endpoint = authMode === 'signup' ? '/auth/signup' : '/auth/login';
+      const res = await fetch(`${API_URL}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: authEmail, password: authPassword })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.detail || 'Identity validation rejected by server.');
+      }
+
+      if (authMode === 'signup') {
+        setAuthMode('login');
+        setAuthError('[SYSTEM] Signup successful! You may now sign in.');
+      } else {
+        localStorage.setItem('nexora_token', data.access_token);
+        setToken(data.access_token);
+        setIsAuthenticated(true);
+        setAuthEmail('');
+        setAuthPassword('');
+      }
+    } catch (err) {
+      setAuthError(`[AUTH_ERROR] ${err.message}`);
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('nexora_token');
+    setToken(null);
+    setIsAuthenticated(false);
+    setUserProfile(null);
+    setItems([]);
+  };
+
+  // Quota & Stats (500MB default, dynamic based on user profile)
+  const totalCapacity = userProfile?.quota?.quota_bytes || 524288000;
+  const usedStorage = userProfile?.quota?.used_bytes || 0;
   const usedPercentage = useMemo(() => {
     return ((usedStorage / totalCapacity) * 100).toFixed(1);
-  }, [usedStorage]);
+  }, [usedStorage, totalCapacity]);
 
-  // Selected item reference
+  // Selected node reference
   const selectedItem = useMemo(() => {
     return items.find(item => item.id === selectedItemId) || null;
   }, [items, selectedItemId]);
@@ -215,44 +159,7 @@ export default function StorageDashboard({ setView }) {
     return crumbs;
   }, [items, currentFolderId]);
 
-  // Filtered Items for rendering
-  const displayedItems = useMemo(() => {
-    let result = items;
-
-    // Search query filter
-    if (searchQuery.trim() !== '') {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(item => item.name.toLowerCase().includes(query));
-    } else {
-      // Sidebar Tab logic
-      if (sidebarTab === 'trash') {
-        result = result.filter(item => item.trashed);
-      } else {
-        result = result.filter(item => !item.trashed);
-        
-        if (sidebarTab === 'starred') {
-          result = result.filter(item => item.starred);
-        } else if (sidebarTab === 'shared') {
-          result = result.filter(item => item.sharedWith && item.sharedWith.length > 0);
-        } else if (sidebarTab === 'recent') {
-          // Sort and limit recent items
-          result = [...result].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)).slice(0, 5);
-          return result; // bypass folder structure for recents
-        } else if (sidebarTab === 'all') {
-          result = result.filter(item => item.parentId === currentFolderId);
-        }
-      }
-    }
-
-    // Sort: Folders first, then alphabetically
-    return result.sort((a, b) => {
-      if (a.type === 'folder' && b.type !== 'folder') return -1;
-      if (a.type !== 'folder' && b.type === 'folder') return 1;
-      return a.name.localeCompare(b.name);
-    });
-  }, [items, currentFolderId, sidebarTab, searchQuery]);
-
-  // Format File Size
+  // File Size Formatter
   const formatSize = (bytes) => {
     if (bytes === null || bytes === undefined) return '-';
     if (bytes === 0) return '0 B';
@@ -262,7 +169,218 @@ export default function StorageDashboard({ setView }) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
   };
 
-  // Helper icons
+  // Node double click trigger (browse folder or download file stream)
+  const handleDoubleClick = (item) => {
+    if (item.type === 'folder') {
+      setCurrentFolderId(item.id);
+      setSelectedItemId(null);
+      setSidebarTab('all');
+    } else {
+      downloadFile(item);
+    }
+  };
+
+  const handleItemClick = (id) => {
+    setSelectedItemId(id === selectedItemId ? null : id);
+    setActiveMenuId(null);
+  };
+
+  // Live CRUD API Calls
+  const createFolder = async () => {
+    if (!newFolderName.trim()) return;
+    try {
+      const res = await fetch(`${API_URL}/nodes/folder`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ name: newFolderName, parent_id: currentFolderId })
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.detail || 'Could not instantiate directory.');
+      }
+      setNewFolderName('');
+      setShowNewFolderModal(false);
+      fetchNodes();
+    } catch (err) {
+      alert(`[ERROR]: ${err.message}`);
+    }
+  };
+
+  const handleFileUpload = async (e) => {
+    const uploadedFiles = e.target.files;
+    if (!uploadedFiles || uploadedFiles.length === 0) return;
+
+    for (let i = 0; i < uploadedFiles.length; i++) {
+      const file = uploadedFiles[i];
+      const uploadId = 'upload_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+      
+      const newUpload = {
+        id: uploadId,
+        name: file.name,
+        progress: 0,
+        completed: false,
+        failed: false,
+        error: null
+      };
+      setUploads(prev => [...prev, newUpload]);
+
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', `${API_URL}/nodes/upload?parent_id=${currentFolderId}`);
+        xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const pct = Math.floor((event.loaded / event.total) * 100);
+            setUploads(prev => prev.map(up => up.id === uploadId ? { ...up, progress: pct } : up));
+          }
+        };
+
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            setUploads(prev => prev.map(up => up.id === uploadId ? { ...up, progress: 100, completed: true } : up));
+            fetchNodes();
+            fetchUserProfile();
+          } else {
+            let errorMsg = 'Upload failed';
+            try {
+              const resJson = JSON.parse(xhr.responseText);
+              errorMsg = resJson.detail || errorMsg;
+            } catch (err) {}
+            setUploads(prev => prev.map(up => up.id === uploadId ? { ...up, failed: true, error: errorMsg } : up));
+          }
+        };
+
+        xhr.onerror = () => {
+          setUploads(prev => prev.map(up => up.id === uploadId ? { ...up, failed: true, error: 'Network socket fault.' } : up));
+        };
+
+        xhr.send(formData);
+      } catch (err) {
+        setUploads(prev => prev.map(up => up.id === uploadId ? { ...up, failed: true, error: err.message } : up));
+      }
+    }
+    e.target.value = null;
+  };
+
+  const downloadFile = async (item) => {
+    try {
+      const response = await fetch(`${API_URL}/nodes/download/${item.id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) throw new Error('Retrieve file request denied.');
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = item.name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (err) {
+      alert(`[DOWNLOAD_ERROR] ${err.message}`);
+    }
+  };
+
+  const toggleStar = async (id) => {
+    try {
+      const res = await fetch(`${API_URL}/nodes/star/${id}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!res.ok) throw new Error('Database star toggled error.');
+      fetchNodes();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const deleteItem = async (id) => {
+    try {
+      const res = await fetch(`${API_URL}/nodes/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!res.ok) throw new Error('Target node removal rejected.');
+      setSelectedItemId(null);
+      fetchNodes();
+      fetchUserProfile();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const restoreItem = async (id) => {
+    try {
+      const res = await fetch(`${API_URL}/nodes/restore/${id}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!res.ok) throw new Error('Database restore failed.');
+      setSelectedItemId(null);
+      fetchNodes();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const shareItem = async () => {
+    if (!shareEmailInput.trim()) return;
+    try {
+      const res = await fetch(`${API_URL}/nodes/share`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ email: shareEmailInput, role_name: 'viewer', node_id: selectedItemId })
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.detail || 'Failed to bind share role.');
+      }
+      setShareEmailInput('');
+      setShowShareModal(false);
+      fetchNodes();
+    } catch (err) {
+      alert(`[SHARE_ERROR]: ${err.message}`);
+    }
+  };
+
+  const renameItem = async () => {
+    if (!renameValue.trim()) return;
+    try {
+      const res = await fetch(`${API_URL}/nodes/rename/${renameItemId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ name: renameValue })
+      });
+      if (!res.ok) throw new Error('Database rename failed.');
+      setRenameItemId(null);
+      setRenameValue('');
+      fetchNodes();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const getFileIcon = (type) => {
     switch (type) {
       case 'folder':
@@ -311,217 +429,97 @@ export default function StorageDashboard({ setView }) {
     }
   };
 
-  // Actions
-  const handleItemClick = (id) => {
-    setSelectedItemId(id === selectedItemId ? null : id);
-    setActiveMenuId(null);
-  };
+  // --- RENDER 1: AUTHENTICATION FORM (TERMINAL ACCESS) ---
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-paper text-forest pt-24 pb-12 flex items-center justify-center font-mono w-full px-6">
+        <div className="w-full max-w-[420px] bg-paper border border-gridColor/20 p-8 relative rounded-none shadow-xl">
+          {/* Corner Markers */}
+          <div className="absolute -top-[1px] -left-[1px] w-[10px] h-[10px] border-t border-l border-forest" />
+          <div className="absolute -top-[1px] -right-[1px] w-[10px] h-[10px] border-t border-r border-forest" />
+          <div className="absolute -bottom-[1px] -left-[1px] w-[10px] h-[10px] border-b border-l border-forest" />
+          <div className="absolute -bottom-[1px] -right-[1px] w-[10px] h-[10px] border-b border-r border-forest" />
 
-  const handleDoubleClick = (item) => {
-    if (item.type === 'folder') {
-      setCurrentFolderId(item.id);
-      setSelectedItemId(null);
-      setSidebarTab('all');
-    } else {
-      // Show Preview modal
-      setPreviewContent(item);
-      setShowPreviewModal(true);
-    }
-  };
+          <div className="text-center mb-8">
+            <h2 className="font-display text-2xl font-bold uppercase tracking-tight text-forest mb-2">
+              {authMode === 'login' ? 'INITIALIZE SECURE GATEWAY' : 'PROVISION GATEWAY IDENTITY'}
+            </h2>
+            <p className="text-[9px] uppercase tracking-widest text-forest/50 font-bold">
+              {authMode === 'login' ? 'PROTOCOL ACCESS TERMINAL' : 'CREATE USER CREDENTIALS'}
+            </p>
+          </div>
 
-  const createFolder = () => {
-    if (!newFolderName.trim()) return;
-    const newFolder = {
-      id: 'folder_' + Date.now(),
-      name: newFolderName,
-      type: 'folder',
-      parentId: currentFolderId,
-      size: null,
-      starred: false,
-      trashed: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      owner: 'chilkabhanuvilasith@gmail.com',
-      sharedWith: [],
-      auditLog: [{ action: 'Created Directory', user: 'chilkabhanuvilasith@gmail.com', date: new Date().toISOString() }]
-    };
-    setItems([...items, newFolder]);
-    setNewFolderName('');
-    setShowNewFolderModal(false);
-  };
+          {authError && (
+            <div className={`p-4 mb-6 text-left border text-[10px] uppercase font-bold break-all rounded-none ${
+              authError.startsWith('[SYSTEM]') 
+                ? 'border-mint bg-mint/5 text-forest' 
+                : 'border-coral bg-coral/5 text-coral'
+            }`}>
+              {authError}
+            </div>
+          )}
 
-  const simulateUpload = (e) => {
-    const uploadedFiles = e.target.files;
-    if (!uploadedFiles || uploadedFiles.length === 0) return;
+          <form onSubmit={handleAuthSubmit} className="space-y-6">
+            <div>
+              <label className="block text-[10px] uppercase tracking-widest text-forest/70 mb-1.5 font-bold">
+                01 // IDENTIFIER EMAIL
+              </label>
+              <input
+                type="email"
+                required
+                value={authEmail}
+                onChange={(e) => setAuthEmail(e.target.value)}
+                className="w-full bg-white border border-gridColor/30 px-3 py-2 text-xs font-mono rounded-none text-forest focus:outline-none focus:border-forest transition-colors duration-150"
+                placeholder="E.G. USER@NEXORA.SH"
+              />
+            </div>
 
-    Array.from(uploadedFiles).forEach((file) => {
-      const uploadId = 'upload_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
-      const newUpload = {
-        id: uploadId,
-        name: file.name,
-        progress: 0,
-        completed: false
-      };
-      setUploads(prev => [...prev, newUpload]);
+            <div>
+              <label className="block text-[10px] uppercase tracking-widest text-forest/70 mb-1.5 font-bold">
+                02 // ENCRYPTED PASSWORD
+              </label>
+              <input
+                type="password"
+                required
+                value={authPassword}
+                onChange={(e) => setAuthPassword(e.target.value)}
+                className="w-full bg-white border border-gridColor/30 px-3 py-2 text-xs font-mono rounded-none text-forest focus:outline-none focus:border-forest transition-colors duration-150"
+                placeholder="********"
+              />
+            </div>
 
-      // Progress Simulation
-      let currentProgress = 0;
-      const interval = setInterval(() => {
-        currentProgress += Math.floor(Math.random() * 15) + 5;
-        if (currentProgress >= 100) {
-          currentProgress = 100;
-          clearInterval(interval);
+            <button
+              type="submit"
+              disabled={authLoading}
+              className="w-full py-3 bg-forest text-paper border border-forest font-bold text-[10px] uppercase tracking-widest hover:bg-coral hover:text-forest hover:border-coral transition-all duration-200 cursor-pointer disabled:opacity-50"
+            >
+              {authLoading ? 'EXECUTING HANDSHAKE...' : authMode === 'login' ? 'ESTABLISH CONNECT' : 'SIGN UP ACCOUNT'}
+            </button>
+          </form>
 
-          // Add to File tree once finished
-          const extension = file.name.split('.').pop().toLowerCase();
-          const newFile = {
-            id: 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-            name: file.name,
-            type: ['pdf','xlsx','docx','png','jpg','mp4','zip','txt'].includes(extension) ? extension : 'txt',
-            parentId: currentFolderId,
-            size: file.size || Math.floor(Math.random() * 5000000) + 10000,
-            starred: false,
-            trashed: false,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            owner: 'chilkabhanuvilasith@gmail.com',
-            sharedWith: [],
-            auditLog: [{ action: 'Simulated Upload', user: 'chilkabhanuvilasith@gmail.com', date: new Date().toISOString() }]
-          };
+          <div className="mt-8 border-t border-gridColor/10 pt-4 text-center">
+            <button
+              onClick={() => {
+                setAuthMode(authMode === 'login' ? 'signup' : 'login');
+                setAuthError('');
+              }}
+              className="text-[9px] uppercase tracking-widest text-forest/60 hover:text-coral transition-colors duration-150 font-bold"
+            >
+              {authMode === 'login' ? 'Switch to identity creation' : 'Return to access credentials'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-          setItems(prevItems => [...prevItems, newFile]);
-          setUploads(prevUploads =>
-            prevUploads.map(up => (up.id === uploadId ? { ...up, progress: 100, completed: true } : up))
-          );
-        } else {
-          setUploads(prevUploads =>
-            prevUploads.map(up => (up.id === uploadId ? { ...up, progress: currentProgress } : up))
-          );
-        }
-      }, 300);
-    });
-
-    // Reset standard input
-    e.target.value = null;
-  };
-
-  const toggleStar = (id) => {
-    setItems(items.map(item => {
-      if (item.id === id) {
-        const nextStarred = !item.starred;
-        const newLog = {
-          action: nextStarred ? 'Starred item' : 'Unstarred item',
-          user: 'chilkabhanuvilasith@gmail.com',
-          date: new Date().toISOString()
-        };
-        return {
-          ...item,
-          starred: nextStarred,
-          auditLog: [...item.auditLog, newLog],
-          updatedAt: new Date().toISOString()
-        };
-      }
-      return item;
-    }));
-  };
-
-  const deleteItem = (id) => {
-    setItems(items.map(item => {
-      if (item.id === id) {
-        const newLog = {
-          action: 'Moved to Trash',
-          user: 'chilkabhanuvilasith@gmail.com',
-          date: new Date().toISOString()
-        };
-        return {
-          ...item,
-          trashed: true,
-          auditLog: [...item.auditLog, newLog],
-          updatedAt: new Date().toISOString()
-        };
-      }
-      return item;
-    }));
-    setSelectedItemId(null);
-  };
-
-  const restoreItem = (id) => {
-    setItems(items.map(item => {
-      if (item.id === id) {
-        const newLog = {
-          action: 'Restored from Trash',
-          user: 'chilkabhanuvilasith@gmail.com',
-          date: new Date().toISOString()
-        };
-        return {
-          ...item,
-          trashed: false,
-          auditLog: [...item.auditLog, newLog],
-          updatedAt: new Date().toISOString()
-        };
-      }
-      return item;
-    }));
-    setSelectedItemId(null);
-  };
-
-  const permanentlyDeleteItem = (id) => {
-    setItems(items.filter(item => item.id !== id));
-    setSelectedItemId(null);
-  };
-
-  const shareItem = () => {
-    if (!shareEmailInput.trim()) return;
-    setItems(items.map(item => {
-      if (item.id === selectedItemId) {
-        const currentShared = item.sharedWith || [];
-        if (currentShared.includes(shareEmailInput)) return item;
-        const newLog = {
-          action: `Shared with ${shareEmailInput}`,
-          user: 'chilkabhanuvilasith@gmail.com',
-          date: new Date().toISOString()
-        };
-        return {
-          ...item,
-          sharedWith: [...currentShared, shareEmailInput],
-          auditLog: [...item.auditLog, newLog],
-          updatedAt: new Date().toISOString()
-        };
-      }
-      return item;
-    }));
-    setShareEmailInput('');
-    setShowShareModal(false);
-  };
-
-  const renameItem = () => {
-    if (!renameValue.trim()) return;
-    setItems(items.map(item => {
-      if (item.id === renameItemId) {
-        const newLog = {
-          action: `Renamed from "${item.name}" to "${renameValue}"`,
-          user: 'chilkabhanuvilasith@gmail.com',
-          date: new Date().toISOString()
-        };
-        return {
-          ...item,
-          name: renameValue,
-          auditLog: [...item.auditLog, newLog],
-          updatedAt: new Date().toISOString()
-        };
-      }
-      return item;
-    }));
-    setRenameItemId(null);
-    setRenameValue('');
-  };
-
+  // --- RENDER 2: STORAGE CONSOLE DASHBOARD ---
   return (
     <div className="min-h-screen bg-paper text-forest pt-16 flex font-mono w-full">
-      {/* Sidebar Section */}
+      {/* Sidebar Navigation */}
       <aside className="w-64 border-r border-gridColor/10 flex flex-col justify-between p-6 bg-paper select-none">
         <div className="space-y-8">
-          {/* New Actions Dropdown */}
+          {/* New Actions Button Dropdown */}
           <div className="relative group">
             <button className="w-full py-3 bg-forest text-paper hover:bg-coral hover:text-forest transition-colors duration-200 border border-forest font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 cursor-pointer">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -544,12 +542,12 @@ export default function StorageDashboard({ setView }) {
                   <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z" />
                 </svg>
                 Upload File
-                <input type="file" multiple onChange={simulateUpload} className="hidden" />
+                <input type="file" onChange={handleFileUpload} className="hidden" />
               </label>
             </div>
           </div>
 
-          {/* Navigation Links */}
+          {/* Nav Categories */}
           <nav className="space-y-1.5">
             <button
               onClick={() => { setSidebarTab('all'); setSelectedItemId(null); }}
@@ -585,17 +583,6 @@ export default function StorageDashboard({ setView }) {
               Starred
             </button>
             <button
-              onClick={() => { setSidebarTab('recent'); setSelectedItemId(null); }}
-              className={`w-full text-left px-3 py-2 text-[10px] font-bold tracking-widest uppercase flex items-center gap-3 transition-colors duration-150 rounded-none cursor-pointer ${
-                sidebarTab === 'recent' ? 'bg-mint/20 text-forest border-l-2 border-forest pl-2' : 'text-forest/70 hover:bg-forest/5 hover:text-forest'
-              }`}
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Recent
-            </button>
-            <button
               onClick={() => { setSidebarTab('trash'); setSelectedItemId(null); }}
               className={`w-full text-left px-3 py-2 text-[10px] font-bold tracking-widest uppercase flex items-center gap-3 transition-colors duration-150 rounded-none cursor-pointer ${
                 sidebarTab === 'trash' ? 'bg-mint/20 text-forest border-l-2 border-forest pl-2' : 'text-forest/70 hover:bg-forest/5 hover:text-forest'
@@ -609,29 +596,43 @@ export default function StorageDashboard({ setView }) {
           </nav>
         </div>
 
-        {/* Storage Bar Indicator */}
-        <div className="space-y-3 font-mono border-t border-gridColor/10 pt-6">
-          <div className="flex justify-between text-[9px] uppercase tracking-wider font-bold text-forest/70">
-            <span>Storage Used</span>
-            <span>{usedPercentage}%</span>
+        {/* User Info & Quota Info */}
+        <div className="space-y-6 border-t border-gridColor/10 pt-6">
+          <div className="space-y-3 font-mono">
+            <div className="flex justify-between text-[9px] uppercase tracking-wider font-bold text-forest/70">
+              <span>Storage Used</span>
+              <span>{usedPercentage}%</span>
+            </div>
+            <div className="w-full h-2.5 bg-gridColor/10 rounded-none overflow-hidden p-[1px] border border-gridColor/20">
+              <div
+                className="h-full bg-forest transition-all duration-300"
+                style={{ width: `${Math.min(100, usedPercentage)}%` }}
+              />
+            </div>
+            <div className="text-[9px] font-bold text-forest/50 uppercase tracking-widest">
+              {formatSize(usedStorage)} of {formatSize(totalCapacity)}
+            </div>
           </div>
-          <div className="w-full h-2.5 bg-gridColor/10 rounded-none overflow-hidden p-[1px] border border-gridColor/20">
-            <div
-              className="h-full bg-forest transition-all duration-300"
-              style={{ width: `${Math.min(100, usedPercentage)}%` }}
-            />
-          </div>
-          <div className="text-[9px] font-bold text-forest/50 uppercase tracking-widest">
-            {formatSize(usedStorage)} of 15.0 GB
+
+          <div className="space-y-2 border-t border-gridColor/10 pt-4">
+            <div className="text-[9px] font-bold text-forest/60 break-all select-all font-mono uppercase">
+              {userProfile?.email}
+            </div>
+            <button
+              onClick={handleLogout}
+              className="w-full py-2 bg-coral/10 hover:bg-coral hover:text-forest text-coral transition-colors duration-150 border border-coral/30 font-bold uppercase tracking-widest text-[8px] cursor-pointer"
+            >
+              Disconnect Node
+            </button>
           </div>
         </div>
       </aside>
 
-      {/* Main Panel Section */}
+      {/* Main Panel */}
       <main className="flex-1 flex flex-col min-w-0 bg-white">
-        {/* Header toolbar */}
+        {/* Header bar */}
         <header className="h-16 border-b border-gridColor/10 px-8 flex items-center justify-between select-none">
-          {/* Breadcrumbs or Search indicators */}
+          {/* Breadcrumbs */}
           <div className="flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-widest text-forest/70">
             {breadcrumbs.map((crumb, idx) => (
               <React.Fragment key={crumb.id}>
@@ -650,34 +651,34 @@ export default function StorageDashboard({ setView }) {
             ))}
           </div>
 
-          {/* Search bar & Grid/List toggles */}
-          <div className="flex items-center gap-6">
-            <div className="relative w-64">
+          {/* Search bar & Grid buttons */}
+          <div className="flex items-center gap-4">
+            <div className="relative">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="SEARCH STORAGE..."
-                className="w-full bg-paper border border-gridColor/20 px-3.5 py-1.5 text-[9px] font-mono font-bold tracking-wider rounded-none focus:outline-none focus:border-forest text-forest placeholder-forest/40 uppercase"
+                placeholder="SEARCH ARCHIVE..."
+                className="bg-paper border border-gridColor/20 px-3 py-1.5 pl-8 text-[10px] font-mono tracking-wide rounded-none text-forest focus:outline-none focus:border-forest w-56 transition-colors duration-150"
               />
-              <svg className="w-3.5 h-3.5 absolute right-3 top-2.5 text-forest/40" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.604 10.604z" />
+              <svg className="w-3.5 h-3.5 text-forest/40 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
               </svg>
             </div>
 
-            {/* Layout Mode Toggles */}
-            <div className="flex items-center border border-gridColor/20 p-[1px] rounded-none">
+            {/* Layout switch buttons */}
+            <div className="flex border border-gridColor/20 p-[2px] bg-paper">
               <button
                 onClick={() => setLayoutMode('grid')}
-                className={`p-1 cursor-pointer transition-colors ${layoutMode === 'grid' ? 'bg-forest text-paper' : 'text-forest/65 hover:bg-forest/5'}`}
+                className={`p-1.5 rounded-none transition-colors cursor-pointer ${layoutMode === 'grid' ? 'bg-forest text-paper' : 'text-forest/60 hover:text-forest'}`}
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z" />
+                  <path d="M4 11h5V5H4v6zm0 8h5v-6H4v6zm6 0h5v-6h-5v6zm6 0h5v-6h-5v6zm-6-8h5V5h-5v6zm6-6v6h5V5h-5z" />
                 </svg>
               </button>
               <button
                 onClick={() => setLayoutMode('list')}
-                className={`p-1 cursor-pointer transition-colors ${layoutMode === 'list' ? 'bg-forest text-paper' : 'text-forest/65 hover:bg-forest/5'}`}
+                className={`p-1.5 rounded-none transition-colors cursor-pointer ${layoutMode === 'list' ? 'bg-forest text-paper' : 'text-forest/60 hover:text-forest'}`}
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M4 14h16v-2H4v2zm0 4h16v-2H4v2zM4 6v2h16V6H4zm0 4h16V8H4v2z" />
@@ -687,350 +688,266 @@ export default function StorageDashboard({ setView }) {
           </div>
         </header>
 
-        {/* Directory Files Grid / List layout */}
-        <div className="flex-1 overflow-y-auto p-8 relative" onClick={() => setSelectedItemId(null)}>
-          {displayedItems.length === 0 ? (
-            <div className="h-full flex flex-col justify-center items-center font-mono text-[10px] text-forest/40 uppercase tracking-widest">
-              <svg className="w-12 h-12 mb-3.5 text-forest/20" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 012.008 1.24l.885 1.77a2.25 2.25 0 002.007 1.24h1.98a2.25 2.25 0 002.007-1.24l.885-1.77a2.25 2.25 0 012.007-1.24h3.86m-18 0A2.25 2.25 0 012.25 10.5V6A2.25 2.25 0 014.5 3.75h15A2.25 2.25 0 0121.75 6v4.5m-18 0A2.25 2.25 0 002.25 13.5v6A2.25 2.25 0 004.5 21.75h15A2.25 2.25 0 0021.75 19.5v-6A2.25 2.25 0 0019.5 13.5m-10.5-6h3m-3 3h3" />
-              </svg>
-              <span>Empty Directory</span>
+        {/* Dynamic Items Browser Area */}
+        <div className="flex-1 overflow-y-auto p-8 relative">
+          {items.length === 0 ? (
+            <div className="absolute inset-0 flex flex-col items-center justify-center font-mono">
+              <div className="w-[40px] h-[40px] border border-dashed border-forest/30 flex items-center justify-center text-forest/40 text-xs mb-3 font-bold">
+                Ø
+              </div>
+              <p className="text-[10px] uppercase tracking-widest text-forest/40 font-bold">
+                No storage nodes provisioned here.
+              </p>
             </div>
-          ) : layoutMode === 'grid' ? (
-            /* Grid Explorer View */
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-              {displayedItems.map((item) => {
-                const isSelected = item.id === selectedItemId;
-                return (
+          ) : (
+            layoutMode === 'grid' ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+                {items.map(item => (
                   <div
                     key={item.id}
-                    onClick={(e) => { e.stopPropagation(); handleItemClick(item.id); }}
+                    onClick={() => handleItemClick(item.id)}
                     onDoubleClick={() => handleDoubleClick(item)}
-                    onContextMenu={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setSelectedItemId(item.id);
-                      setActiveMenuId(item.id);
-                    }}
-                    className={`relative border p-4.5 flex flex-col items-center justify-between cursor-pointer group transition-all rounded-none h-40 ${
-                      isSelected
-                        ? 'border-forest bg-mint/10'
-                        : 'border-gridColor/10 hover:border-forest/40 bg-paper/50'
+                    className={`border p-4 relative flex flex-col items-center justify-between h-36 cursor-pointer select-none transition-all group duration-150 ${
+                      selectedItemId === item.id 
+                        ? 'border-forest bg-mint/5 shadow-md scale-[1.02]' 
+                        : 'border-gridColor/10 hover:border-forest/40 hover:bg-paper/50'
                     }`}
                   >
-                    {/* Floating star indicator */}
+                    {/* Star icon badge if starred */}
                     {item.starred && (
-                      <div className="absolute top-2.5 right-2.5 text-gold">
-                        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                        </svg>
-                      </div>
+                      <span className="absolute top-2 left-2 text-gold">★</span>
                     )}
 
-                    {/* Icon block */}
-                    <div className="mb-4 text-forest/80 group-hover:scale-105 transition-transform duration-200">
-                      {getFileIcon(item.type)}
-                    </div>
-
-                    {/* Name block */}
-                    <span className="w-full text-center text-[10px] font-bold text-forest truncate uppercase tracking-wider">
-                      {item.name}
-                    </span>
-
-                    {/* Meta indicator (size/type) */}
-                    <span className="text-[8px] text-forest/40 uppercase tracking-widest mt-1">
-                      {item.type === 'folder' ? 'Folder' : formatSize(item.size)}
-                    </span>
-
-                    {/* Inline Action Dropdown Menu Trigger */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setActiveMenuId(activeMenuId === item.id ? null : item.id);
-                      }}
-                      className="absolute bottom-2 right-2 p-1 text-forest/30 hover:text-forest hidden group-hover:block transition-colors cursor-pointer"
-                    >
-                      <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-                      </svg>
-                    </button>
-
-                    {/* Context Action Menu */}
-                    {activeMenuId === item.id && (
-                      <div
-                        className="absolute top-full right-0 mt-1 bg-white border border-gridColor/20 shadow-xl z-30 py-1.5 w-44 font-mono text-[9px] font-bold uppercase tracking-wider select-none"
-                        onClick={(e) => e.stopPropagation()}
+                    {/* Context Actions Dropdown Indicator */}
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 z-10 transition-opacity">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveMenuId(activeMenuId === item.id ? null : item.id);
+                        }}
+                        className="p-1 hover:bg-forest/10 text-forest/70 hover:text-forest cursor-pointer"
                       >
-                        {!item.trashed ? (
-                          <>
+                        ⋮
+                      </button>
+                      {activeMenuId === item.id && (
+                        <div className="absolute top-full right-0 mt-1 bg-white border border-gridColor/20 shadow-xl w-36 py-1 z-30 font-mono text-[9px] uppercase tracking-wider font-bold">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); toggleStar(item.id); setActiveMenuId(null); }}
+                            className="w-full text-left px-3 py-1.5 hover:bg-mint/20 text-forest cursor-pointer"
+                          >
+                            {item.starred ? 'Unstar Node' : 'Star Node'}
+                          </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setRenameItemId(item.id); setRenameValue(item.name); setActiveMenuId(null); }}
+                            className="w-full text-left px-3 py-1.5 hover:bg-mint/20 text-forest cursor-pointer border-t border-gridColor/10"
+                          >
+                            Rename Item
+                          </button>
+                          {item.type !== 'folder' && (
                             <button
-                              onClick={() => { toggleStar(item.id); setActiveMenuId(null); }}
-                              className="w-full text-left px-4 py-2 hover:bg-mint/20 flex items-center gap-2 cursor-pointer"
+                              onClick={(e) => { e.stopPropagation(); downloadFile(item); setActiveMenuId(null); }}
+                              className="w-full text-left px-3 py-1.5 hover:bg-mint/20 text-forest cursor-pointer border-t border-gridColor/10"
                             >
-                              Star / Unstar
+                              Download
                             </button>
-                            {item.type !== 'folder' && (
+                          )}
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setShowShareModal(true); setActiveMenuId(null); }}
+                            className="w-full text-left px-3 py-1.5 hover:bg-mint/20 text-forest cursor-pointer border-t border-gridColor/10"
+                          >
+                            Share Link
+                          </button>
+                          {item.trashed ? (
+                            <>
                               <button
-                                onClick={() => { setShowShareModal(true); setActiveMenuId(null); }}
-                                className="w-full text-left px-4 py-2 hover:bg-mint/20 flex items-center gap-2 cursor-pointer"
+                                onClick={(e) => { e.stopPropagation(); restoreItem(item.id); setActiveMenuId(null); }}
+                                className="w-full text-left px-3 py-1.5 hover:bg-mint/20 text-forest cursor-pointer border-t border-gridColor/10"
                               >
-                                Get Share Link
+                                Restore
                               </button>
-                            )}
+                              <button
+                                onClick={(e) => { e.stopPropagation(); deleteItem(item.id); setActiveMenuId(null); }}
+                                className="w-full text-left px-3 py-1.5 hover:bg-coral/20 text-coral cursor-pointer border-t border-gridColor/10"
+                              >
+                                Delete Forever
+                              </button>
+                            </>
+                          ) : (
                             <button
-                              onClick={() => { setRenameItemId(item.id); setRenameValue(item.name); setActiveMenuId(null); }}
-                              className="w-full text-left px-4 py-2 hover:bg-mint/20 flex items-center gap-2 cursor-pointer"
-                            >
-                              Rename
-                            </button>
-                            <button
-                              onClick={() => { deleteItem(item.id); setActiveMenuId(null); }}
-                              className="w-full text-left px-4 py-2 hover:bg-coral/20 text-coral flex items-center gap-2 cursor-pointer border-t border-gridColor/5 mt-1.5 pt-2"
+                              onClick={(e) => { e.stopPropagation(); deleteItem(item.id); setActiveMenuId(null); }}
+                              className="w-full text-left px-3 py-1.5 hover:bg-coral/20 text-coral cursor-pointer border-t border-gridColor/10"
                             >
                               Move to Trash
                             </button>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              onClick={() => { restoreItem(item.id); setActiveMenuId(null); }}
-                              className="w-full text-left px-4 py-2 hover:bg-mint/20 flex items-center gap-2 cursor-pointer"
-                            >
-                              Restore
-                            </button>
-                            <button
-                              onClick={() => { permanentlyDeleteItem(item.id); setActiveMenuId(null); }}
-                              className="w-full text-left px-4 py-2 hover:bg-coral/20 text-coral flex items-center gap-2 cursor-pointer border-t border-gridColor/5 mt-1.5 pt-2"
-                            >
-                              Delete Forever
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    )}
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex-1 flex items-center justify-center">
+                      {getFileIcon(item.type)}
+                    </div>
+                    <div className="w-full text-center mt-2">
+                      <p className="text-[10px] font-bold text-forest truncate px-1">
+                        {item.name}
+                      </p>
+                      <p className="text-[8px] text-forest/40 font-mono mt-0.5">
+                        {item.type === 'folder' ? 'DIR' : formatSize(item.size)}
+                      </p>
+                    </div>
                   </div>
-                );
-              })}
-            </div>
-          ) : (
-            /* List Explorer View */
-            <div className="border border-gridColor/10 rounded-none overflow-hidden select-none">
-              <table className="w-full text-left font-mono text-[9px] uppercase tracking-wider">
-                <thead className="bg-paper border-b border-gridColor/10 font-bold text-forest/70">
-                  <tr>
-                    <th className="p-4 w-1/2">Name</th>
-                    <th className="p-4 w-1/6">Last Modified</th>
-                    <th className="p-4 w-1/8">Size</th>
-                    <th className="p-4 w-1/8 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {displayedItems.map((item) => {
-                    const isSelected = item.id === selectedItemId;
-                    return (
+                ))}
+              </div>
+            ) : (
+              <div className="border border-gridColor/10 select-none">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-gridColor/10 bg-paper text-[8px] uppercase tracking-widest text-forest/50 font-bold">
+                      <th className="p-3">Name</th>
+                      <th className="p-3">Type</th>
+                      <th className="p-3">Size</th>
+                      <th className="p-3">Last Updated</th>
+                      <th className="p-3 text-right">Owner</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {items.map(item => (
                       <tr
                         key={item.id}
-                        onClick={(e) => { e.stopPropagation(); handleItemClick(item.id); }}
+                        onClick={() => handleItemClick(item.id)}
                         onDoubleClick={() => handleDoubleClick(item)}
-                        className={`border-b border-gridColor/10 group cursor-pointer transition-colors ${
-                          isSelected ? 'bg-mint/15' : 'hover:bg-paper/40'
+                        className={`border-b border-gridColor/5 text-[9px] font-bold hover:bg-paper/50 cursor-pointer ${
+                          selectedItemId === item.id ? 'bg-mint/5 text-forest' : ''
                         }`}
                       >
-                        <td className="p-4 flex items-center gap-3.5 font-bold">
-                          <div className="text-forest/65 scale-75">
-                            {getFileIcon(item.type)}
-                          </div>
-                          <span>{item.name}</span>
-                          {item.starred && <span className="text-gold font-bold">★</span>}
+                        <td className="p-3 flex items-center gap-2 max-w-[240px] truncate">
+                          {item.starred && <span className="text-gold">★</span>}
+                          {item.name}
                         </td>
-                        <td className="p-4 text-forest/60">
-                          {new Date(item.updatedAt).toLocaleDateString()}
-                        </td>
-                        <td className="p-4 text-forest/60">
-                          {item.type === 'folder' ? '-' : formatSize(item.size)}
-                        </td>
-                        <td className="p-4 text-right relative">
-                          <div className="flex justify-end gap-3.5">
-                            <button
-                              onClick={(e) => { e.stopPropagation(); toggleStar(item.id); }}
-                              className="text-forest/30 hover:text-gold cursor-pointer"
-                            >
-                              ★
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setActiveMenuId(activeMenuId === item.id ? null : item.id);
-                              }}
-                              className="text-forest/30 hover:text-forest cursor-pointer font-bold"
-                            >
-                              •••
-                            </button>
-                          </div>
-
-                          {/* Context Action Menu for List View */}
-                          {activeMenuId === item.id && (
-                            <div
-                              className="absolute top-full right-4 mt-1 bg-white border border-gridColor/20 shadow-xl z-30 py-1.5 w-44 font-mono text-[9px] font-bold uppercase tracking-wider text-left"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              {!item.trashed ? (
-                                <>
-                                  {item.type !== 'folder' && (
-                                    <button
-                                      onClick={() => { setShowShareModal(true); setActiveMenuId(null); }}
-                                      className="w-full text-left px-4 py-2 hover:bg-mint/20 flex items-center gap-2 cursor-pointer"
-                                    >
-                                      Get Share Link
-                                    </button>
-                                  )}
-                                  <button
-                                    onClick={() => { setRenameItemId(item.id); setRenameValue(item.name); setActiveMenuId(null); }}
-                                    className="w-full text-left px-4 py-2 hover:bg-mint/20 flex items-center gap-2 cursor-pointer"
-                                  >
-                                    Rename
-                                  </button>
-                                  <button
-                                    onClick={() => { deleteItem(item.id); setActiveMenuId(null); }}
-                                    className="w-full text-left px-4 py-2 hover:bg-coral/20 text-coral flex items-center gap-2 cursor-pointer border-t border-gridColor/5 mt-1.5 pt-2"
-                                  >
-                                    Move to Trash
-                                  </button>
-                                </>
-                              ) : (
-                                <>
-                                  <button
-                                    onClick={() => { restoreItem(item.id); setActiveMenuId(null); }}
-                                    className="w-full text-left px-4 py-2 hover:bg-mint/20 flex items-center gap-2 cursor-pointer"
-                                  >
-                                    Restore
-                                  </button>
-                                  <button
-                                    onClick={() => { permanentlyDeleteItem(item.id); setActiveMenuId(null); }}
-                                    className="w-full text-left px-4 py-2 hover:bg-coral/20 text-coral flex items-center gap-2 cursor-pointer border-t border-gridColor/5 mt-1.5 pt-2"
-                                  >
-                                    Delete Forever
-                                  </button>
-                                </>
-                              )}
-                            </div>
-                          )}
-                        </td>
+                        <td className="p-3 uppercase text-forest/50 font-mono">{item.type}</td>
+                        <td className="p-3 font-mono">{item.type === 'folder' ? 'DIRECTORY' : formatSize(item.size)}</td>
+                        <td className="p-3 font-mono text-forest/60">{new Date(item.updatedAt).toLocaleDateString()}</td>
+                        <td className="p-3 text-right text-forest/50 font-mono">{item.owner}</td>
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )
           )}
         </div>
       </main>
 
-      {/* Selected Item Details Drawer Sidebar */}
-      {selectedItem && (
-        <aside className="w-80 border-l border-gridColor/10 p-6 flex flex-col gap-6 bg-paper overflow-y-auto">
-          {/* Header */}
-          <div className="flex items-center justify-between border-b border-gridColor/10 pb-4">
-            <h3 className="font-bold text-[10px] uppercase tracking-widest text-forest">File Details</h3>
-            <button
-              onClick={() => setSelectedItemId(null)}
-              className="text-forest/50 hover:text-forest text-xs cursor-pointer font-bold"
-            >
-              ✕
-            </button>
-          </div>
-
-          {/* Thumbnail preview */}
-          <div className="h-44 bg-gridColor/5 border border-gridColor/10 flex items-center justify-center p-4">
-            {getFileIcon(selectedItem.type)}
-          </div>
-
-          {/* Name & Basic Info */}
-          <div>
-            <h4 className="font-bold text-[11px] uppercase tracking-wider text-forest truncate">{selectedItem.name}</h4>
-            <p className="text-[8px] uppercase tracking-widest text-forest/40 mt-1">{selectedItem.type} Resource</p>
-          </div>
-
-          {/* Detail Metadata Grid */}
-          <div className="space-y-3.5 font-mono text-[9px] border-t border-b border-gridColor/10 py-5">
-            <div className="flex justify-between">
-              <span className="text-forest/50 uppercase tracking-wider">Type</span>
-              <span className="font-bold text-forest uppercase">{selectedItem.type}</span>
+      {/* Details Side Panel (Expandable info about selected item) */}
+      <aside className="w-72 border-l border-gridColor/10 p-6 bg-paper select-none flex flex-col justify-between font-mono">
+        {selectedItem ? (
+          <div className="space-y-6">
+            <div className="border-b border-gridColor/10 pb-4 text-left">
+              <h3 className="text-[10px] font-bold uppercase tracking-widest text-forest truncate">
+                {selectedItem.name}
+              </h3>
+              <p className="text-[8px] text-forest/40 uppercase mt-0.5">
+                Node Profile Specs
+              </p>
             </div>
-            {selectedItem.type !== 'folder' && (
+
+            <div className="space-y-4 text-[9px] uppercase tracking-wider text-forest/80 font-bold">
               <div className="flex justify-between">
-                <span className="text-forest/50 uppercase tracking-wider">Size</span>
-                <span className="font-bold text-forest">{formatSize(selectedItem.size)}</span>
+                <span className="text-forest/40">UUID</span>
+                <span className="truncate max-w-[140px] text-right font-mono">{selectedItem.id}</span>
               </div>
-            )}
-            <div className="flex justify-between">
-              <span className="text-forest/50 uppercase tracking-wider">Owner</span>
-              <span className="font-bold text-forest truncate max-w-[160px]" title={selectedItem.owner}>
-                {selectedItem.owner.split('@')[0]}
-              </span>
-            </div>
-            <div className="flex justify-between flex-wrap gap-1">
-              <span className="text-forest/50 uppercase tracking-wider">Shared With</span>
-              <span className="font-bold text-forest text-right">
-                {selectedItem.sharedWith && selectedItem.sharedWith.length > 0
-                  ? selectedItem.sharedWith.map(s => s.split('@')[0]).join(', ')
-                  : 'Only You'}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-forest/50 uppercase tracking-wider">Created</span>
-              <span className="font-bold text-forest">{new Date(selectedItem.createdAt).toLocaleDateString()}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-forest/50 uppercase tracking-wider">Modified</span>
-              <span className="font-bold text-forest">{new Date(selectedItem.updatedAt).toLocaleDateString()}</span>
-            </div>
-          </div>
-
-          {/* System Audit Log Activity */}
-          <div className="space-y-4">
-            <h4 className="font-bold text-[9px] uppercase tracking-widest text-forest/70">Audit Telemetry</h4>
-            <div className="relative border-l border-gridColor/20 pl-4 space-y-4 font-mono text-[8px] uppercase tracking-wider">
-              {selectedItem.auditLog.map((log, idx) => (
-                <div key={idx} className="relative">
-                  {/* Bullet */}
-                  <div className="absolute -left-[21px] top-1 w-2.5 h-2.5 bg-mint border border-forest rounded-none" />
-                  <p className="font-bold text-forest">{log.action}</p>
-                  <p className="text-forest/50 text-[7px] mt-0.5">
-                    {log.user.split('@')[0]} // {new Date(log.date).toLocaleDateString()}
-                  </p>
+              <div className="flex justify-between">
+                <span className="text-forest/40">Type</span>
+                <span>{selectedItem.type}</span>
+              </div>
+              {selectedItem.type !== 'folder' && (
+                <div className="flex justify-between">
+                  <span className="text-forest/40">Size</span>
+                  <span>{formatSize(selectedItem.size)}</span>
                 </div>
-              ))}
+              )}
+              {selectedItem.backend && (
+                <div className="flex justify-between">
+                  <span className="text-forest/40">Pool Target</span>
+                  <span className="text-mint font-bold uppercase">{selectedItem.backend}</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span className="text-forest/40">Created</span>
+                <span>{new Date(selectedItem.createdAt).toLocaleDateString()}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-forest/40">Owner</span>
+                <span className="truncate max-w-[140px] text-right">{selectedItem.owner}</span>
+              </div>
+              <div className="border-t border-gridColor/10 pt-4 space-y-1.5">
+                <div className="text-forest/40">Collaborators</div>
+                <div className="text-[8px] font-bold text-forest/70 font-mono leading-relaxed lowercase break-all">
+                  {selectedItem.sharedWith && selectedItem.sharedWith.length > 0 
+                    ? selectedItem.sharedWith.join(', ') 
+                    : 'System isolate only'}
+                </div>
+              </div>
+            </div>
+
+            {/* Audit Logs */}
+            <div className="border-t border-gridColor/10 pt-4 space-y-3">
+              <span className="text-[9px] font-bold text-forest/40 uppercase tracking-widest">
+                System Audit Log
+              </span>
+              <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1">
+                {selectedItem.auditLog?.map((log, idx) => (
+                  <div key={idx} className="border-l border-forest/30 pl-2 text-[8px] font-mono leading-relaxed text-forest/60">
+                    <span className="text-forest font-bold">[{log.action}]</span>
+                    <br />
+                    <span>User: {log.user}</span>
+                    <br />
+                    <span>{new Date(log.date).toLocaleString()}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </aside>
-      )}
+        ) : (
+          <div className="flex-1 flex flex-col items-center justify-center text-center text-forest/40 font-mono">
+            <svg className="w-8 h-8 text-forest/20 mb-2" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.083 1.083l-.041.02-.016.009aA9.033 9.033 0 01-1.802.79l-.014.004a.75.75 0 01-.444-.08l-.017-.01-.013-.007a7.518 7.518 0 01.515-1.127l.006-.012z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 5.636a9 9 0 11-12.728 12.728 9 9 0 0112.728-12.728z" />
+            </svg>
+            <p className="text-[9px] uppercase tracking-widest font-bold">
+              Select an item to view cryptographic specs & audit logs
+            </p>
+          </div>
+        )}
+      </aside>
 
-      {/* CREATE FOLDER MODAL */}
+      {/* --- ACTION MODALS AND NOTIFICATIONS --- */}
+
+      {/* 1. New Folder Modal */}
       {showNewFolderModal && (
-        <div className="fixed inset-0 bg-forest/40 backdrop-blur-xs flex items-center justify-center z-50 p-6 select-none font-mono">
-          <div className="w-full max-w-[360px] bg-paper border border-forest p-6">
-            <h4 className="font-bold text-[10px] uppercase tracking-widest text-forest mb-4 border-b border-gridColor/10 pb-2">
-              Create Folder
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center z-50 font-mono">
+          <div className="w-[320px] bg-paper border border-gridColor/30 p-6 relative rounded-none shadow-2xl">
+            <h4 className="text-[10px] font-bold uppercase tracking-widest text-forest mb-4">
+              Create New Folder
             </h4>
             <input
               type="text"
+              required
               value={newFolderName}
               onChange={(e) => setNewFolderName(e.target.value)}
-              placeholder="FOLDER NAME..."
-              className="w-full bg-white border border-gridColor/30 px-3 py-2.5 text-[10px] uppercase tracking-wider focus:outline-none focus:border-forest text-forest rounded-none placeholder-forest/30"
-              autoFocus
+              placeholder="FOLDER NAME"
+              className="w-full bg-white border border-gridColor/30 px-3 py-2 text-xs font-mono rounded-none text-forest focus:outline-none focus:border-forest transition-colors duration-150 mb-4"
             />
-            <div className="flex justify-end gap-3 mt-6">
+            <div className="flex gap-3 justify-end text-[8px] uppercase tracking-widest font-bold">
               <button
-                onClick={() => { setShowNewFolderModal(false); setNewFolderName(''); }}
-                className="px-4 py-2 border border-gridColor/30 text-[9px] uppercase tracking-widest hover:bg-forest/5 cursor-pointer font-bold"
+                onClick={() => setShowNewFolderModal(false)}
+                className="px-3 py-2 bg-paper text-forest/70 hover:text-forest cursor-pointer border border-gridColor/20"
               >
                 Cancel
               </button>
               <button
                 onClick={createFolder}
-                className="px-4 py-2 bg-forest text-paper hover:bg-mint hover:text-forest transition-colors text-[9px] uppercase tracking-widest cursor-pointer font-bold"
+                className="px-3 py-2 bg-forest text-paper hover:bg-coral hover:text-forest transition-colors cursor-pointer border border-forest"
               >
                 Create
               </button>
@@ -1039,31 +956,64 @@ export default function StorageDashboard({ setView }) {
         </div>
       )}
 
-      {/* RENAME MODAL */}
+      {/* 2. Share Modal */}
+      {showShareModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center z-50 font-mono">
+          <div className="w-[360px] bg-paper border border-gridColor/30 p-6 relative rounded-none shadow-2xl">
+            <h4 className="text-[10px] font-bold uppercase tracking-widest text-forest mb-4">
+              Share Cryptographic Link
+            </h4>
+            <input
+              type="email"
+              required
+              value={shareEmailInput}
+              onChange={(e) => setShareEmailInput(e.target.value)}
+              placeholder="ENTER COLLABORATOR EMAIL..."
+              className="w-full bg-white border border-gridColor/30 px-3 py-2 text-xs font-mono rounded-none text-forest focus:outline-none focus:border-forest transition-colors duration-150 mb-4"
+            />
+            <div className="flex gap-3 justify-end text-[8px] uppercase tracking-widest font-bold">
+              <button
+                onClick={() => setShowShareModal(false)}
+                className="px-3 py-2 bg-paper text-forest/70 hover:text-forest cursor-pointer border border-gridColor/20"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={shareItem}
+                className="px-3 py-2 bg-forest text-paper hover:bg-coral hover:text-forest transition-colors cursor-pointer border border-forest"
+              >
+                Authorize
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Rename Modal */}
       {renameItemId && (
-        <div className="fixed inset-0 bg-forest/40 backdrop-blur-xs flex items-center justify-center z-50 p-6 select-none font-mono">
-          <div className="w-full max-w-[360px] bg-paper border border-forest p-6">
-            <h4 className="font-bold text-[10px] uppercase tracking-widest text-forest mb-4 border-b border-gridColor/10 pb-2">
-              Rename Item
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center z-50 font-mono">
+          <div className="w-[320px] bg-paper border border-gridColor/30 p-6 relative rounded-none shadow-2xl">
+            <h4 className="text-[10px] font-bold uppercase tracking-widest text-forest mb-4">
+              Rename Storage Node
             </h4>
             <input
               type="text"
+              required
               value={renameValue}
               onChange={(e) => setRenameValue(e.target.value)}
-              placeholder="NEW NAME..."
-              className="w-full bg-white border border-gridColor/30 px-3 py-2.5 text-[10px] uppercase tracking-wider focus:outline-none focus:border-forest text-forest rounded-none"
-              autoFocus
+              placeholder="NEW NAME"
+              className="w-full bg-white border border-gridColor/30 px-3 py-2 text-xs font-mono rounded-none text-forest focus:outline-none focus:border-forest transition-colors duration-150 mb-4"
             />
-            <div className="flex justify-end gap-3 mt-6">
+            <div className="flex gap-3 justify-end text-[8px] uppercase tracking-widest font-bold">
               <button
                 onClick={() => { setRenameItemId(null); setRenameValue(''); }}
-                className="px-4 py-2 border border-gridColor/30 text-[9px] uppercase tracking-widest hover:bg-forest/5 cursor-pointer font-bold"
+                className="px-3 py-2 bg-paper text-forest/70 hover:text-forest cursor-pointer border border-gridColor/20"
               >
                 Cancel
               </button>
               <button
                 onClick={renameItem}
-                className="px-4 py-2 bg-forest text-paper hover:bg-mint hover:text-forest transition-colors text-[9px] uppercase tracking-widest cursor-pointer font-bold"
+                className="px-3 py-2 bg-forest text-paper hover:bg-coral hover:text-forest transition-colors cursor-pointer border border-forest"
               >
                 Rename
               </button>
@@ -1072,128 +1022,32 @@ export default function StorageDashboard({ setView }) {
         </div>
       )}
 
-      {/* SHARE LINK MODAL */}
-      {showShareModal && (
-        <div className="fixed inset-0 bg-forest/40 backdrop-blur-xs flex items-center justify-center z-50 p-6 select-none font-mono">
-          <div className="w-full max-w-[400px] bg-paper border border-forest p-6">
-            <h4 className="font-bold text-[10px] uppercase tracking-widest text-forest mb-2 border-b border-gridColor/10 pb-2">
-              Share File
-            </h4>
-            <p className="text-[8px] uppercase tracking-widest text-forest/50 mb-4">
-              Enter target collaborator's identity
-            </p>
-            <input
-              type="email"
-              value={shareEmailInput}
-              onChange={(e) => setShareEmailInput(e.target.value)}
-              placeholder="COLLABORATOR@ENTERPRISE.COM"
-              className="w-full bg-white border border-gridColor/30 px-3 py-2.5 text-[10px] uppercase tracking-wider focus:outline-none focus:border-forest text-forest rounded-none placeholder-forest/30"
-              autoFocus
-            />
-            <div className="mt-4 p-3 bg-forest/5 border border-forest/10 rounded-none text-[8px] text-forest/70 break-all select-all font-bold">
-              https://nexora-95a7767b.fastapicloud.dev/shares/{selectedItemId}
-            </div>
-            <div className="flex justify-end gap-3 mt-6">
-              <button
-                onClick={() => { setShowShareModal(false); setShareEmailInput(''); }}
-                className="px-4 py-2 border border-gridColor/30 text-[9px] uppercase tracking-widest hover:bg-forest/5 cursor-pointer font-bold"
-              >
-                Close
-              </button>
-              <button
-                onClick={shareItem}
-                className="px-4 py-2 bg-forest text-paper hover:bg-mint hover:text-forest transition-colors text-[9px] uppercase tracking-widest cursor-pointer font-bold"
-              >
-                Add Member
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* PREVIEW LIGHTBOX MODAL */}
-      {showPreviewModal && previewContent && (
-        <div className="fixed inset-0 bg-forest/80 backdrop-blur-sm flex flex-col items-center justify-center z-50 p-12 font-mono select-none">
-          <div className="absolute top-6 right-8 flex items-center gap-4 z-50">
-            <a
-              href="#"
-              onClick={(e) => { e.preventDefault(); alert("Simulating file download..."); }}
-              className="px-4 py-2 border border-paper text-paper text-[10px] uppercase tracking-widest hover:bg-white hover:text-forest transition-colors font-bold"
-            >
-              Download File
-            </a>
-            <button
-              onClick={() => { setShowPreviewModal(false); setPreviewContent(null); }}
-              className="p-2 border border-paper text-paper text-xs uppercase hover:bg-white hover:text-forest cursor-pointer transition-colors font-bold"
-            >
-              ✕ Close
-            </button>
-          </div>
-
-          <div className="w-full max-w-[800px] h-[500px] bg-paper border border-forest flex flex-col p-6 items-center justify-between z-10">
-            <h4 className="font-bold text-[11px] uppercase tracking-wider text-forest border-b border-gridColor/10 w-full pb-3">
-              Preview // {previewContent.name}
-            </h4>
-            
-            {/* Conditional Previews */}
-            <div className="flex-1 w-full flex items-center justify-center p-8 overflow-hidden">
-              {['png', 'jpg'].includes(previewContent.type) ? (
-                <div className="w-full h-full bg-forest/5 border border-forest/10 flex items-center justify-center relative">
-                  <span className="text-[10px] uppercase tracking-widest text-forest/40 absolute">Image Asset Preview Rendering</span>
-                  <div className="w-16 h-16 bg-forest/10 border border-forest text-forest flex items-center justify-center select-none font-bold">PNG</div>
-                </div>
-              ) : previewContent.type === 'mp4' ? (
-                <div className="w-full h-full bg-black/90 flex flex-col justify-center items-center text-paper p-8 relative">
-                  <span className="text-[9px] uppercase tracking-widest text-paper/40 mb-3.5">Media Player Engine</span>
-                  <div className="w-12 h-12 bg-coral text-forest rounded-full flex items-center justify-center font-bold text-lg select-none cursor-pointer">▶</div>
-                </div>
-              ) : (
-                <div className="w-full h-full border border-forest/10 bg-forest/5 p-6 overflow-y-auto text-[9px] leading-relaxed uppercase tracking-wider text-forest/70 font-mono text-left">
-                  <p className="font-bold text-forest mb-4">// TELEMETRY PROTOCOL LOGS START //</p>
-                  <p className="mb-2">File Node: {previewContent.id}</p>
-                  <p className="mb-2">File Hash verification: SHA-256 SECURED</p>
-                  <p className="mb-2">Owner cryptosig: {previewContent.owner}</p>
-                  <p className="mb-4">Sync Status: Immutable ledger check OK</p>
-                  <p className="text-forest">// END OF ENCRYPTED METADATA FRAME //</p>
-                </div>
-              )}
-            </div>
-
-            <div className="w-full flex justify-between text-[8px] text-forest/50 uppercase tracking-widest pt-3 border-t border-gridColor/10">
-              <span>Size: {formatSize(previewContent.size)}</span>
-              <span>Updated: {new Date(previewContent.updatedAt).toLocaleString()}</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* FLOATING SIMULATED UPLOADS STATUS DRAWER */}
+      {/* Upload Telemetry Status Drawer (Bottom Right) */}
       {uploads.length > 0 && (
-        <div className="fixed bottom-6 right-6 w-80 bg-paper border border-forest shadow-2xl z-40 select-none font-mono">
-          <div className="bg-forest text-paper px-4 py-3 flex items-center justify-between border-b border-forest">
-            <span className="font-bold text-[9px] uppercase tracking-widest">Active Uploads ({uploads.filter(u => !u.completed).length})</span>
-            <button
-              onClick={() => setUploads([])}
-              className="text-[9px] uppercase tracking-widest hover:text-coral transition-colors font-bold cursor-pointer"
-            >
-              Clear
-            </button>
+        <div className="fixed bottom-6 right-6 w-80 bg-paper border border-gridColor/30 shadow-2xl z-50 font-mono p-4">
+          <div className="flex justify-between border-b border-gridColor/10 pb-2 mb-3">
+            <span className="text-[9px] font-bold uppercase tracking-widest text-forest">Upload Telemetry</span>
+            <button onClick={() => setUploads([])} className="text-[9px] font-bold text-forest/40 hover:text-coral cursor-pointer">Clear</button>
           </div>
-          <div className="max-h-60 overflow-y-auto p-4 space-y-3.5">
-            {uploads.map((up) => (
-              <div key={up.id} className="space-y-1.5">
-                <div className="flex justify-between text-[8px] uppercase tracking-wider font-bold">
-                  <span className="truncate max-w-[180px] text-forest" title={up.name}>{up.name}</span>
-                  <span className={up.completed ? "text-mint font-bold" : "text-forest"}>
-                    {up.completed ? "COMPLETED" : `${up.progress}%`}
+          <div className="space-y-3 max-h-48 overflow-y-auto pr-1">
+            {uploads.map(up => (
+              <div key={up.id} className="text-[9px] font-bold flex flex-col gap-1.5 uppercase">
+                <div className="flex justify-between items-center">
+                  <span className="truncate max-w-[180px]">{up.name}</span>
+                  <span className={up.failed ? 'text-coral' : up.completed ? 'text-mint' : 'text-forest/75'}>
+                    {up.failed ? 'Failed' : up.completed ? 'Complete' : `${up.progress}%`}
                   </span>
                 </div>
-                <div className="w-full h-2.5 bg-gridColor/10 border border-gridColor/20 p-[1px]">
-                  <div
-                    className={`h-full transition-all duration-200 ${up.completed ? "bg-mint" : "bg-forest"}`}
-                    style={{ width: `${up.progress}%` }}
-                  />
-                </div>
+                {!up.completed && !up.failed && (
+                  <div className="w-full h-1 bg-gridColor/10 overflow-hidden">
+                    <div className="h-full bg-forest transition-all" style={{ width: `${up.progress}%` }} />
+                  </div>
+                )}
+                {up.failed && (
+                  <span className="text-[7px] text-coral lowercase break-all pr-2">
+                    {up.error}
+                  </span>
+                )}
               </div>
             ))}
           </div>
