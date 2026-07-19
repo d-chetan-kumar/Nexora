@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import MosaicBackground from './components/MosaicBackground';
 import Nav from './components/Nav';
 import Hero from './components/Hero';
@@ -9,17 +9,24 @@ import TestimonialCard from './components/TestimonialCard';
 import TechnicalFormCTA from './components/TechnicalFormCTA';
 import Footer from './components/Footer';
 import StatusBadge from './components/StatusBadge';
+import StorageDashboard from './components/StorageDashboard';
 
 export default function App() {
+  const [view, setView] = useState('landing'); // 'landing' or 'console'
+
   return (
     <div className="relative min-h-screen selection:bg-mint selection:text-forest">
       {/* Background SVG mosaic grid */}
       <MosaicBackground />
 
       {/* Navigation Header */}
-      <Nav />
+      <Nav view={view} setView={setView} />
 
-      {/* Hero Presentation Layer */}
+      {view === 'console' ? (
+        <StorageDashboard setView={setView} />
+      ) : (
+        <>
+          {/* Hero Presentation Layer */}
       <Hero />
 
       <SectionDivider />
@@ -109,6 +116,8 @@ export default function App() {
 
       {/* Footer Spec */}
       <Footer />
+        </>
+      )}
     </div>
   );
 }
