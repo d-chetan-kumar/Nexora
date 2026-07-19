@@ -2,6 +2,7 @@ import asyncio
 from logging.config import fileConfig
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import create_async_engine
+from urllib.parse import urlparse, urlunparse
 from alembic import context
 
 # Inject backend path into sys.path to locate the app module
@@ -11,8 +12,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.config import settings
 from app.database import Base
-# Import all database models to populate metadata for autogenerate
-from app.models import User, Role, RoleAssignment, File
+from app.models import User, Role, RoleBinding, UserQuota, StorageNode, PoolUsage
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -32,8 +32,19 @@ def run_migrations_offline() -> None:
         url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
     elif url.startswith("postgres://"):
         url = url.replace("postgres://", "postgresql+asyncpg://", 1)
+    
+    parsed = urlparse(url)
+    cleaned_url = urlunparse((
+        parsed.scheme,
+        parsed.netloc,
+        parsed.path,
+        parsed.params,
+        '',
+        parsed.fragment
+    ))
+    
     context.configure(
-        url=url,
+        url=cleaned_url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -55,9 +66,25 @@ async def run_migrations_online() -> None:
         url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
     elif url.startswith("postgres://"):
         url = url.replace("postgres://", "postgresql+asyncpg://", 1)
+        
+    parsed = urlparse(url)
+    connect_args = {}
+    if parsed.query and ("ssl" in parsed.query or "sslmode" in parsed.query):
+        connect_args["ssl"] = True
+
+    cleaned_url = urlunparse((
+        parsed.scheme,
+        parsed.netloc,
+        parsed.path,
+        parsed.params,
+        '',
+        parsed.fragment
+    ))
+    
     connectable = create_async_engine(
-        url,
+        cleaned_url,
         poolclass=pool.NullPool,
+        connect_args=connect_args
     )
 
     async with connectable.connect() as connection:
