@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+@import url('https://api.fontshare.com/v2/css?f[]=author@1&display=swap');
 @import '@fontsource/space-grotesk/index.css';
 @import '@fontsource/jetbrains-mono/index.css';
 
@@ -12,7 +13,7 @@
   --color-gold:   #F4D35E;
 
   --font-display: 'Space Grotesk', sans-serif;
-  --font-body:    'General Sans', sans-serif;
+  --font-body:    'Author', '_Author_Variable', sans-serif;
   --font-mono:    'JetBrains Mono', monospace;
 }
 
@@ -25,7 +26,7 @@
   --color-gold: #F4D35E;
 
   --font-display: 'Space Grotesk', sans-serif;
-  --font-body: 'General Sans', sans-serif;
+  --font-body: 'Author', '_Author_Variable', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
   --radius-none: 0px;

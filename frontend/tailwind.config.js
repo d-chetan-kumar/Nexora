@@ -16,7 +16,7 @@ export default {
       },
       fontFamily: {
         display: ['"Space Grotesk"', 'sans-serif'],
-        body: ['"General Sans"', 'sans-serif'],
+        body: ['Author', '_Author_Variable', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'monospace'],
       },
       borderRadius: {
