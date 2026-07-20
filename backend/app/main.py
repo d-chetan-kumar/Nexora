@@ -19,7 +19,7 @@ from app.config import settings
 from app.models import Base, User, Role, RoleBinding, UserQuota, StorageNode, PoolUsage
 from app.auth import get_current_user, hash_password, verify_password, create_access_token, create_refresh_token
 from app.storage import storage_router
-from app.rbac import rbac_required, rbac_service
+from app.rbac import rbac_required, rbac_service, permission_cache
 from app.schemas import SignupRequest, LoginRequest, RefreshRequest, NewFolderRequest, RenameRequest, ShareRequest, TokenResponse
 
 # Lifespan manager to seed database default values
@@ -330,6 +330,7 @@ def delete_node(
         # First-pass delete: send to Trash
         node.trashed = True
         db.commit()
+        permission_cache.invalidate_node(node_id)
         return {"status": "trashed", "node_id": node.id}
 
     # Second-pass delete: delete forever
@@ -359,6 +360,7 @@ def delete_node(
 
     recursive_delete(node)
     db.commit()
+    permission_cache.invalidate_node(node_id)
     return {"status": "deleted_permanently"}
 
 @app.post("/nodes/restore/{node_id}")
@@ -411,6 +413,7 @@ def rename_node(
     node.name = payload.name
     node.updated_at = datetime.datetime.utcnow()
     db.commit()
+    permission_cache.invalidate_node(node_id)
     return {"status": "success", "name": node.name}
 
 @app.post("/nodes/share")
@@ -443,6 +446,8 @@ def share_node(
         ))
 
     db.commit()
+    permission_cache.invalidate_node(payload.node_id)
+    permission_cache.invalidate_user(target_user.id)
     return {"status": "success", "shared_with": target_user.email, "role": role.name}
 
 # --- STATIC FRONTEND ROUTING LAYER ---
