@@ -5,7 +5,8 @@ import os
 from contextlib import asynccontextmanager
 from typing import Optional, List
 from fastapi import FastAPI, Depends, HTTPException, status, File, UploadFile
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
@@ -443,3 +444,30 @@ def share_node(
 
     db.commit()
     return {"status": "success", "shared_with": target_user.email, "role": role.name}
+
+# --- STATIC FRONTEND ROUTING LAYER ---
+
+# Resolve build output directory path
+frontend_dist_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../frontend/dist"))
+
+if os.path.exists(frontend_dist_path):
+    assets_path = os.path.join(frontend_dist_path, "assets")
+    if os.path.exists(assets_path):
+        app.mount("/assets", StaticFiles(directory=assets_path), name="assets")
+
+    @app.get("/{catchall:path}")
+    async def serve_frontend(catchall: str):
+        # Resolve target static file in dist folder (e.g. favicon, index.html, etc.)
+        file_path = os.path.join(frontend_dist_path, catchall)
+        if os.path.exists(file_path) and os.path.isfile(file_path):
+            return FileResponse(file_path)
+
+        # Fallback to index.html to let React Router/state router take over SPA URLs
+        index_file = os.path.join(frontend_dist_path, "index.html")
+        if os.path.exists(index_file):
+            return FileResponse(index_file)
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Static frontend build index file not found. Run 'npm run build' inside frontend."
+        )
+

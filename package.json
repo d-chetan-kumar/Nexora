@@ -1,0 +1,16 @@
+{
+  "name": "nexora-fullstack",
+  "version": "2.0.0",
+  "description": "Integrated entry point for Nexora cloud storage gateway engine",
+  "scripts": {
+    "setup": "npm run setup:frontend && npm run setup:backend",
+    "setup:frontend": "npm --prefix frontend install",
+    "setup:backend": "cd backend && .\\venv\\Scripts\\pip install -r requirements.txt",
+    "build:frontend": "npm --prefix frontend run build",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "cd backend && .\\venv\\Scripts\\uvicorn app.main:app --reload --port 8000",
+    "dev": "npx concurrently -k -p \"[{name}]\" -n \"fastapi,vite\" -c \"green,cyan\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "start": "cd backend && .\\venv\\Scripts\\uvicorn app.main:app --host 0.0.0.0 --port 8000",
+    "migrate": "cd backend && .\\venv\\Scripts\\alembic upgrade head"
+  }
+}
